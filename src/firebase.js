@@ -14,8 +14,10 @@ import {
   doc,
 } from "firebase/firestore";
 
+console.log("API Key:", process.env);
+
 const firebaseConfig = {
-  apiKey: "AIzaSyCAxoO3VI7luc2bQEXSwpeb8VzXgSpbFLQ",
+  apiKey: process.env.REACT_APP_API_KEY,
   authDomain: "expensetrackerapp-92854.firebaseapp.com",
   projectId: "expensetrackerapp-92854",
   storageBucket: "expensetrackerapp-92854.appspot.com",
