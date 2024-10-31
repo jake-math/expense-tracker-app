@@ -18,12 +18,11 @@ console.log("API Key:", process.env);
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
-  authDomain: "expensetrackerapp-92854.firebaseapp.com",
-  projectId: "expensetrackerapp-92854",
-  storageBucket: "expensetrackerapp-92854.appspot.com",
-  messagingSenderId: "563331540616",
-  appId: "1:563331540616:web:7714a779d888d2b769213d",
-  measurementId: "G-GR5KSWW2D3",
+  authDomain: "expense-tracker-302b0.firebaseapp.com",
+  projectId: "expense-tracker-302b0",
+  storageBucket: "expense-tracker-302b0.firebasestorage.app",
+  messagingSenderId: "586008602105",
+  appId: "1:586008602105:web:03b80ce129499abb6d4928",
 };
 
 const app = initializeApp(firebaseConfig);
