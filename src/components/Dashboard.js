@@ -8,6 +8,7 @@ import {
 } from "../firebase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function Dashboard() {
   const [expenses, setExpenses] = useState([]);
@@ -18,7 +19,6 @@ function Dashboard() {
   const [editAmount, setEditAmount] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -36,11 +36,9 @@ function Dashboard() {
     const filteredExpenses = expensesData.filter((expense) => {
       const expenseDate = new Date(expense.date);
       const isAfterStartDate = startDate
-        ? expenseDate >= new Date(startDate + "T00:00:00Z")
+        ? expenseDate >= new Date(startDate)
         : true;
-      const isBeforeEndDate = endDate
-        ? expenseDate <= new Date(endDate + "T23:59:59Z")
-        : true;
+      const isBeforeEndDate = endDate ? expenseDate <= new Date(endDate) : true;
       return isAfterStartDate && isBeforeEndDate;
     });
     setExpenses(filteredExpenses);
@@ -52,10 +50,6 @@ function Dashboard() {
 
   const handleAddExpense = async (e) => {
     e.preventDefault();
-    if (!description || amount <= 0) {
-      setMessage("Please provide a valid description and amount.");
-      return;
-    }
     const newExpense = {
       description,
       amount: parseFloat(amount),
@@ -64,13 +58,11 @@ function Dashboard() {
     await addExpense(newExpense);
     setDescription("");
     setAmount("");
-    setMessage("Expense added successfully!");
     fetchExpenses();
   };
 
   const handleDelete = async (id) => {
     await deleteExpense(id);
-    setMessage("Expense deleted successfully!");
     fetchExpenses();
   };
 
@@ -81,93 +73,137 @@ function Dashboard() {
   };
 
   const handleUpdateExpense = async (id) => {
-    if (!editDescription || editAmount <= 0) {
-      setMessage("Please provide a valid description and amount.");
-      return;
-    }
     const updatedExpense = {
       description: editDescription,
       amount: parseFloat(editAmount),
     };
     await updateExpense(id, updatedExpense);
     setEditMode(null);
-    setMessage("Expense updated successfully!");
     fetchExpenses();
   };
 
   return (
-    <div>
-      <h1>Expense Tracker Dashboard</h1>
+    <div className="mt-5">
+      <h1 className="text-center">Expense Tracker Dashboard</h1>
 
-      {/* Display user feedback */}
-      {message && <p>{message}</p>}
+      <div className="container">
+        <form onSubmit={handleAddExpense} className="mb-4">
+          <div className="form-row">
+            <div className="col">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              />
+            </div>
+            <div className="col">
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Amount"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                required
+              />
+            </div>
+            <div className="col">
+              <button type="submit" className="btn btn-primary">
+                Add Expense
+              </button>
+            </div>
+          </div>
+        </form>
 
-      <form onSubmit={handleAddExpense}>
-        <input
-          type="text"
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-        />
-        <button type="submit">Add Expense</button>
-      </form>
+        <div>
+          <h3>Filter Expenses</h3>
+          <div className="form-row mb-4">
+            <div className="col">
+              <input
+                type="date"
+                className="form-control"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </div>
+            <div className="col">
+              <input
+                type="date"
+                className="form-control"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
 
-      {/* Filter Inputs */}
-      <div>
-        <h3>Filter Expenses</h3>
-        <input
-          type="date"
-          placeholder="Start Date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-        />
-        <input
-          type="date"
-          placeholder="End Date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-        />
-      </div>
-      <h3>Expenses</h3>
-      <ul>
-        {expenses.map((expense) => (
-          <li key={expense.id}>
-            {editMode === expense.id ? (
-              <div>
-                <input
-                  type="text"
-                  value={editDescription}
-                  onChange={(e) => setEditDescription(e.target.value)}
-                />
-                <input
-                  type="number"
-                  value={editAmount}
-                  onChange={(e) => setEditAmount(e.target.value)}
-                />
-                <button onClick={() => handleUpdateExpense(expense.id)}>
-                  Save
-                </button>
-                <button onClick={() => setEditMode(null)}>Cancel</button>
-              </div>
-            ) : (
-              <div>
-                {expense.description} - ${expense.amount.toFixed(2)}
-                <button onClick={() => handleEdit(expense)}>Edit</button>
-                <button onClick={() => handleDelete(expense.id)}>Delete</button>
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
-      <div>
-        <p>You are logged in as: {auth.currentUser?.email}</p>
-        <button onClick={handleLogout}>Log Out</button>
+        <h3>Expenses</h3>
+        <ul className="list-group">
+          {expenses.map((expense) => (
+            <li
+              key={expense.id}
+              className="list-group-item d-flex justify-content-between align-items-center"
+            >
+              {editMode === expense.id ? (
+                <div className="d-flex">
+                  <input
+                    type="text"
+                    className="form-control mr-2"
+                    value={editDescription}
+                    onChange={(e) => setEditDescription(e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    className="form-control mr-2"
+                    value={editAmount}
+                    onChange={(e) => setEditAmount(e.target.value)}
+                  />
+                  <button
+                    className="btn btn-success"
+                    onClick={() => handleUpdateExpense(expense.id)}
+                  >
+                    Save
+                  </button>
+                  <button
+                    className="btn btn-secondary ml-2"
+                    onClick={() => setEditMode(null)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <div className="d-flex justify-content-between align-items-center w-100">
+                  <span>
+                    {expense.description} - ${expense.amount.toFixed(2)}
+                  </span>
+                  <div>
+                    <button
+                      className="btn btn-warning mr-2"
+                      onClick={() => handleEdit(expense)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleDelete(expense.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-4">
+          <p>You are logged in as: {auth.currentUser?.email}</p>
+          <button className="btn btn-danger" onClick={handleLogout}>
+            Log Out
+          </button>
+        </div>
       </div>
     </div>
   );
