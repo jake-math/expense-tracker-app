@@ -14,8 +14,6 @@ import {
   doc,
 } from "firebase/firestore";
 
-console.log("API Key:", process.env);
-
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
   authDomain: "expense-tracker-302b0.firebaseapp.com",
