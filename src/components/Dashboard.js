@@ -33,13 +33,20 @@ function Dashboard() {
 
   const fetchExpenses = useCallback(async () => {
     const expensesData = await getExpenses();
+
     const filteredExpenses = expensesData.filter((expense) => {
       const expenseDate = new Date(expense.date);
       const isAfterStartDate = startDate
-        ? expenseDate >= new Date(startDate)
+        ? expenseDate >= new Date(startDate).setHours(0, 0, 0, 0)
         : true;
-      const isBeforeEndDate = endDate ? expenseDate <= new Date(endDate) : true;
-      return isAfterStartDate && isBeforeEndDate;
+      const isBeforeEndDate = endDate
+        ? expenseDate <= new Date(endDate).setHours(23, 59, 59, 999)
+        : true;
+      const userIdMatches =
+        auth && expense.userId
+          ? expense.userId === auth.currentUser?.uid
+          : true;
+      return isAfterStartDate && isBeforeEndDate && userIdMatches;
     });
     setExpenses(filteredExpenses);
   }, [startDate, endDate]);
@@ -51,6 +58,7 @@ function Dashboard() {
   const handleAddExpense = async (e) => {
     e.preventDefault();
     const newExpense = {
+      userId: auth.currentUser?.uid,
       description,
       amount: parseFloat(amount),
       date: new Date().toISOString(),
@@ -101,6 +109,8 @@ function Dashboard() {
             type="number"
             className="form-control"
             placeholder="Amount"
+            min="0.01"
+            step="0.01"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             required
@@ -114,7 +124,7 @@ function Dashboard() {
       </form>
 
       <div>
-        <h3>Filter Expenses</h3>
+        <h3 className="text-center">Filter Expenses</h3>
         <div className="mt-4">
           <div className="mb-3">
             <input
@@ -135,7 +145,7 @@ function Dashboard() {
         </div>
       </div>
 
-      <h3>Expenses</h3>
+      <h3 className="text-center">Expenses</h3>
       <ul className="list-group">
         {expenses.map((expense) => (
           <li
