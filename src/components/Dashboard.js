@@ -5,7 +5,7 @@ import {
   deleteExpense,
   updateExpense,
   auth,
-} from "../firebase";
+} from "../util/firebase";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -83,127 +83,122 @@ function Dashboard() {
   };
 
   return (
-    <div className="mt-5">
-      <h1 className="text-center">Expense Tracker Dashboard</h1>
-
-      <div className="container">
-        <form onSubmit={handleAddExpense} className="mb-4">
-          <div className="form-row">
-            <div className="col">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              />
-            </div>
-            <div className="col">
-              <input
-                type="number"
-                className="form-control"
-                placeholder="Amount"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                required
-              />
-            </div>
-            <div className="col">
-              <button type="submit" className="btn btn-primary">
-                Add Expense
-              </button>
-            </div>
-          </div>
-        </form>
-
-        <div>
-          <h3>Filter Expenses</h3>
-          <div className="form-row mb-4">
-            <div className="col">
-              <input
-                type="date"
-                className="form-control"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-            </div>
-            <div className="col">
-              <input
-                type="date"
-                className="form-control"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </div>
-          </div>
+    <div className="container mt-5">
+      <h2 className="text-center">Expense Tracker Dashboard</h2>
+      <form onSubmit={handleAddExpense} className="mt-4">
+        <div className="mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
         </div>
-
-        <h3>Expenses</h3>
-        <ul className="list-group">
-          {expenses.map((expense) => (
-            <li
-              key={expense.id}
-              className="list-group-item d-flex justify-content-between align-items-center"
-            >
-              {editMode === expense.id ? (
-                <div className="d-flex">
-                  <input
-                    type="text"
-                    className="form-control mr-2"
-                    value={editDescription}
-                    onChange={(e) => setEditDescription(e.target.value)}
-                  />
-                  <input
-                    type="number"
-                    className="form-control mr-2"
-                    value={editAmount}
-                    onChange={(e) => setEditAmount(e.target.value)}
-                  />
-                  <button
-                    className="btn btn-success"
-                    onClick={() => handleUpdateExpense(expense.id)}
-                  >
-                    Save
-                  </button>
-                  <button
-                    className="btn btn-secondary ml-2"
-                    onClick={() => setEditMode(null)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              ) : (
-                <div className="d-flex justify-content-between align-items-center w-100">
-                  <span>
-                    {expense.description} - ${expense.amount.toFixed(2)}
-                  </span>
-                  <div>
-                    <button
-                      className="btn btn-warning mr-2"
-                      onClick={() => handleEdit(expense)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => handleDelete(expense.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-
-        <div className="mt-4">
-          <p>You are logged in as: {auth.currentUser?.email}</p>
-          <button className="btn btn-danger" onClick={handleLogout}>
-            Log Out
+        <div className="mb-3">
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Amount"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <button type="submit" className="btn btn-primary w-100">
+            Add Expense
           </button>
         </div>
+      </form>
+
+      <div>
+        <h3>Filter Expenses</h3>
+        <div className="mt-4">
+          <div className="mb-3">
+            <input
+              type="date"
+              className="form-control"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              type="date"
+              className="form-control"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
+      <h3>Expenses</h3>
+      <ul className="list-group">
+        {expenses.map((expense) => (
+          <li
+            key={expense.id}
+            className="list-group-item d-flex justify-content-between align-items-center"
+          >
+            {editMode === expense.id ? (
+              <div className="d-flex">
+                <input
+                  type="text"
+                  className="form-control mr-2"
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                />
+                <input
+                  type="number"
+                  className="form-control mr-2"
+                  value={editAmount}
+                  onChange={(e) => setEditAmount(e.target.value)}
+                />
+                <button
+                  className="btn btn-success"
+                  onClick={() => handleUpdateExpense(expense.id)}
+                >
+                  Save
+                </button>
+                <button
+                  className="btn btn-secondary ml-2"
+                  onClick={() => setEditMode(null)}
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <div className="d-flex justify-content-between align-items-center w-100">
+                <span>
+                  {expense.description} - ${expense.amount.toFixed(2)}
+                </span>
+                <div>
+                  <button
+                    className="btn btn-warning mr-2"
+                    onClick={() => handleEdit(expense)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDelete(expense.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-4">
+        <p>You are logged in as: {auth.currentUser?.email}</p>
+        <button className="btn btn-danger" onClick={handleLogout}>
+          Log Out
+        </button>
       </div>
     </div>
   );

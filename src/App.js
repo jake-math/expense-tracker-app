@@ -8,7 +8,7 @@ import {
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
-import { auth } from "./firebase";
+import { auth } from "./util/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 function App() {
