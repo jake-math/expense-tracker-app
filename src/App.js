@@ -1,15 +1,8 @@
 import React from "react";
-import {
-  HashRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import Dashboard from "./components/Dashboard";
+import { HashRouter as Router, Route, Routes } from "react-router-dom";
 import { auth } from "./util/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { routes } from "./util/routes";
 
 function App() {
   const [user, loading] = useAuthState(auth);
@@ -20,24 +13,9 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route
-            path="/"
-            element={
-              user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
-            }
-          />
-          <Route
-            path="/login"
-            element={user ? <Navigate to="/dashboard" /> : <Login />}
-          />
-          <Route
-            path="/register"
-            element={user ? <Navigate to="/dashboard" /> : <Register />}
-          />
-          <Route
-            path="/dashboard"
-            element={user ? <Dashboard /> : <Navigate to="/login" />}
-          />
+          {routes(user).map((route, index) => (
+            <Route key={index} path={route.path} element={route.element} />
+          ))}
         </Routes>
       </div>
     </Router>

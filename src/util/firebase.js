@@ -4,7 +4,7 @@ import {
   setPersistence,
   browserLocalPersistence,
 } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, setDoc } from "firebase/firestore";
 import {
   collection,
   addDoc,
@@ -70,5 +70,51 @@ export const deleteExpense = async (id) => {
     await deleteDoc(doc(db, "expenses", id));
   } catch (error) {
     console.error("Error deleting expense:", error);
+  }
+};
+
+export const addGroup = async (group) => {
+  try {
+    await addDoc(collection(db, "groups"), group);
+  } catch (error) {
+    console.error("Error adding group:", error);
+  }
+};
+
+export const getGroups = async () => {
+  const groups = [];
+  try {
+    const querySnapshot = await getDocs(collection(db, "groups"));
+    querySnapshot.forEach((doc) => {
+      groups.push({ id: doc.id, ...doc.data() });
+    });
+  } catch (error) {
+    console.error("Error getting groups:", error);
+  }
+  return groups;
+};
+
+export const updateGroup = async (id, updatedData) => {
+  try {
+    const groupDoc = doc(db, "group", id);
+    await updateDoc(groupDoc, updatedData);
+  } catch (error) {
+    console.error("Error updating group: ", error);
+  }
+};
+
+export const deleteGroup = async (id) => {
+  try {
+    await deleteDoc(doc(db, "group", id));
+  } catch (error) {
+    console.error("Error deleting group:", error);
+  }
+};
+
+export const addUser = async (user, uid) => {
+  try {
+    await setDoc(doc(db, "users", uid), user);
+  } catch (error) {
+    console.error("Error adding user:", error);
   }
 };

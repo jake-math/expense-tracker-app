@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { auth } from "../util/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { addUser, auth } from "../util/firebase";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function Register() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -15,8 +16,26 @@ function Register() {
     setError("");
     setSuccess("");
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      await updateProfile(user, {
+        displayName: name,
+      });
+
+      const newUser = {
+        email: email,
+        groups: [],
+      };
+
+      await addUser(newUser, user.uid);
+
       setSuccess("Registration successful! Please log in.");
+      setName("");
       setEmail("");
       setPassword("");
     } catch (err) {
@@ -30,6 +49,16 @@ function Register() {
       {success && <div className="alert alert-success">{success}</div>}
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleRegister} className="mt-4">
+        <div className="mb-3">
+          <input
+            type="name"
+            className="form-control"
+            placeholder="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
         <div className="mb-3">
           <input
             type="email"

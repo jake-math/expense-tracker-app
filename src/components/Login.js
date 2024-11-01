@@ -14,7 +14,7 @@ function Login() {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/dashboard");
+      navigate("/landingPage");
     } catch (err) {
       setError(err.message);
     }

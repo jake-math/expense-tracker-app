@@ -10,7 +10,7 @@ import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-function Dashboard() {
+function ExpenseDashboard() {
   const [expenses, setExpenses] = useState([]);
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
@@ -43,9 +43,7 @@ function Dashboard() {
         ? expenseDate <= new Date(endDate).setHours(23, 59, 59, 999)
         : true;
       const userIdMatches =
-        auth && expense.userId
-          ? expense.userId === auth.currentUser?.uid
-          : true;
+        auth && expense.owner ? expense.owner === auth.currentUser?.uid : true;
       return isAfterStartDate && isBeforeEndDate && userIdMatches;
     });
     setExpenses(filteredExpenses);
@@ -58,7 +56,7 @@ function Dashboard() {
   const handleAddExpense = async (e) => {
     e.preventDefault();
     const newExpense = {
-      userId: auth.currentUser?.uid,
+      owner: auth.currentUser?.uid,
       description,
       amount: parseFloat(amount),
       date: new Date().toISOString(),
@@ -123,6 +121,8 @@ function Dashboard() {
         </div>
       </form>
 
+      <br />
+
       <div>
         <h3 className="text-center">Filter Expenses</h3>
         <div className="mt-4">
@@ -144,6 +144,8 @@ function Dashboard() {
           </div>
         </div>
       </div>
+
+      <br />
 
       <h3 className="text-center">Expenses</h3>
       <ul className="list-group">
@@ -204,8 +206,24 @@ function Dashboard() {
         ))}
       </ul>
 
-      <div className="mt-4">
-        <p>You are logged in as: {auth.currentUser?.email}</p>
+      <br />
+      <br />
+
+      <h4 className="text-center">Current group: {"Default"}</h4>
+      <div className="text-center">
+        <button
+          className="btn btn-success"
+          onClick={() => navigate("/groupManagement")}
+        >
+          Change Group
+        </button>
+      </div>
+
+      <br />
+      <br />
+
+      <div className="logout-button">
+        <p>You are logged in as: {auth.currentUser?.displayName}</p>
         <button className="btn btn-danger" onClick={handleLogout}>
           Log Out
         </button>
@@ -214,4 +232,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default ExpenseDashboard;

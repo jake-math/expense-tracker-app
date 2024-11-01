@@ -22,7 +22,7 @@ Database Structure:
   "date": "October 31, 2024 at 0:0:0 PM UTC",
   "description": "description",
   "groupId": "groupId",
-  "userId": "userId"
+  "owner": "userId"
 }
 ```
 
@@ -32,6 +32,7 @@ Database Structure:
 {
   "id": "groupId",
   "name": "groupName",
+  "owner": "userId",
   "users": [
     "userId"
   ]
