@@ -50,7 +50,7 @@ function ExpenseDashboard() {
       return isAfterStartDate && isBeforeEndDate && groupMatches;
     });
     setExpenses(filteredExpenses);
-  }, [startDate, endDate]);
+  }, [startDate, endDate, activeGroup]);
 
   const fetchActiveGroup = useCallback(() => {
     const storedGroup = localStorage.getItem("activeGroup");
