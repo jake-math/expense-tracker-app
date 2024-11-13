@@ -19,6 +19,7 @@ function ExpenseDashboard() {
   const [editAmount, setEditAmount] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [activeGroup, setActiveGroup] = useState({});
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -42,16 +43,26 @@ function ExpenseDashboard() {
       const isBeforeEndDate = endDate
         ? expenseDate <= new Date(endDate).setHours(23, 59, 59, 999)
         : true;
-      const userIdMatches =
-        auth && expense.owner ? expense.owner === auth.currentUser?.uid : true;
-      return isAfterStartDate && isBeforeEndDate && userIdMatches;
+      const groupMatches =
+        activeGroup && expense.groupId
+          ? expense.groupId === activeGroup.id
+          : true;
+      return isAfterStartDate && isBeforeEndDate && groupMatches;
     });
     setExpenses(filteredExpenses);
   }, [startDate, endDate]);
 
+  const fetchActiveGroup = useCallback(() => {
+    const storedGroup = localStorage.getItem("activeGroup");
+    if (storedGroup) {
+      setActiveGroup(JSON.parse(storedGroup));
+    }
+  }, []);
+
   useEffect(() => {
     fetchExpenses();
-  }, [fetchExpenses]);
+    fetchActiveGroup();
+  }, [fetchExpenses, fetchActiveGroup]);
 
   const handleAddExpense = async (e) => {
     e.preventDefault();
@@ -60,6 +71,7 @@ function ExpenseDashboard() {
       description,
       amount: parseFloat(amount),
       date: new Date().toISOString(),
+      groupId: activeGroup.id,
     };
     await addExpense(newExpense);
     setDescription("");
@@ -209,11 +221,13 @@ function ExpenseDashboard() {
       <br />
       <br />
 
-      <h4 className="text-center">Current group: {"Default"}</h4>
+      <h4 className="text-center">
+        Current group: {activeGroup.name || "None"}
+      </h4>
       <div className="text-center">
         <button
           className="btn btn-success"
-          onClick={() => navigate("/groupManagement")}
+          onClick={() => navigate("/groupDashboard")}
         >
           Change Group
         </button>

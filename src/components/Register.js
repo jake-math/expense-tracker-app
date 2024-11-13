@@ -30,6 +30,7 @@ function Register() {
       const newUser = {
         email: email,
         groups: [],
+        name: name,
       };
 
       await addUser(newUser, user.uid);

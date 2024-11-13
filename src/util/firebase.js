@@ -105,7 +105,7 @@ export const updateGroup = async (id, updatedData) => {
 
 export const deleteGroup = async (id) => {
   try {
-    await deleteDoc(doc(db, "group", id));
+    await deleteDoc(doc(db, "groups", id));
   } catch (error) {
     console.error("Error deleting group:", error);
   }
@@ -116,5 +116,27 @@ export const addUser = async (user, uid) => {
     await setDoc(doc(db, "users", uid), user);
   } catch (error) {
     console.error("Error adding user:", error);
+  }
+};
+
+export const getUser = async (id) => {
+  const users = [];
+  try {
+    const querySnapshot = await getDocs(collection(db, "users"));
+    querySnapshot.forEach((doc) => {
+      users.push({ id: doc.id, ...doc.data() });
+    });
+  } catch (error) {
+    console.error("Error getting users:", error);
+  }
+  return users.find((user) => user.id === id);
+};
+
+export const updateUser = async (id, updatedData) => {
+  try {
+    const groupDoc = doc(db, "users", id);
+    await updateDoc(groupDoc, updatedData);
+  } catch (error) {
+    console.error("Error updating user: ", error);
   }
 };

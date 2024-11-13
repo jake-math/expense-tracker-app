@@ -2,7 +2,7 @@ import React from "react";
 import Login from "../components/Login";
 import Register from "../components/Register";
 import ExpenseDashboard from "../components/ExpenseDashboard";
-import GroupManagement from "../components/GroupManagement";
+import GroupDashboard from "../components/GroupDashboard";
 import LandingPage from "../components/LandingPage";
 import { Navigate } from "react-router-dom";
 
@@ -28,8 +28,8 @@ export const routes = (user) => [
     element: user ? <ExpenseDashboard /> : <Navigate to="/login" />,
   },
   {
-    path: "/groupManagement",
-    element: user ? <GroupManagement /> : <Navigate to="/login" />,
+    path: "/groupDashboard",
+    element: user ? <GroupDashboard /> : <Navigate to="/login" />,
   },
   {
     path: "/landingPage",
